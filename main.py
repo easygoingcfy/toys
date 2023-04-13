@@ -1,7 +1,10 @@
 import datetime
 import sys
 
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLineEdit, QPushButton, QHBoxLayout, QVBoxLayout, QTextEdit, QWidget, QLabel
+from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QLabel, QLineEdit,
+                             QMainWindow, QPushButton, QTextEdit, QVBoxLayout,
+                             QWidget)
+from utils.time_util import ts_range_by_date
 
 
 class TimeTransform(QWidget):
@@ -33,13 +36,12 @@ class TimeTransform(QWidget):
         self.setGeometry(300, 300, 800, 600)
         self.setWindowTitle('toys')
         self.show()
-    
+
     def transform(self):
-        value = self.date_str_line.text()
-        self.ts_line.setText(value)
-        self.te_line.setText(value)
-
-
+        date = self.date_str_line.text()
+        ts, te = ts_range_by_date(date)
+        self.ts_line.setText(str(ts))
+        self.te_line.setText(str(te))
 
 
 if __name__ == "__main__":
