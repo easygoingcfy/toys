@@ -1,3 +1,4 @@
+import re
 import time
 import datetime
 
@@ -26,6 +27,7 @@ def today(fmt="%Y-%m-%d"):
 def ts_range_by_date(date):
     if not isinstance(date, str):
         date = str(date)
+    date = re.search("\d{4}-\d{2}-\d{2}", date).group()
     date_st = datetime.datetime.strptime(date, '%Y-%m-%d')
     date_en = date_st + datetime.timedelta(days=1, seconds=0)
     return date_st.timestamp(), date_en.timestamp()
