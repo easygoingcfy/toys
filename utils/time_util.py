@@ -36,7 +36,7 @@ def extract_date(string) -> str:
     return "-".join(date_str)
 
 def extract_time(string) -> str:
-    time_str = re.search(r"(\d{4}).*?(\d{2}).*?(\d{2}).*?(\d{2})", string).groups()
+    time_str = re.split(r'[ :/\-T年月日]', string)
     time_str = "".join(time_str)
     if len(time_str) != 14:
         time_str += "0" * (14 - len(time_str))
@@ -44,4 +44,4 @@ def extract_time(string) -> str:
 
 
 if __name__ == "__main__":
-    extract_time("2023-02-11 20 49 22")
+    extract_time("2023-02-11 20 49 23")
