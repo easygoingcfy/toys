@@ -3,10 +3,8 @@ import time
 import datetime
 
 
-def str2timestamp(s, fmt="%Y-%m-%d %H:%M:%S"):
-    timeArray = time.strptime(s, fmt)
-    timestamp = time.mktime(timeArray)
-    return timestamp
+def str2timestamp(string, fmt="%Y-%m-%d %H:%M:%S"):
+    return int(datetime.datetime.strptime(string, fmt).timestamp())
 
 
 def timestamp2str(timestamp, fmt="%Y-%m-%d %H:%M:%S"):
@@ -29,5 +27,21 @@ def ts_range_by_date(date):
         date = str(date)
     date = re.search("\d{4}-\d{2}-\d{2}", date).group()
     date_st = datetime.datetime.strptime(date, '%Y-%m-%d')
-    date_en = date_st + datetime.timedelta(days=1, seconds=0)
-    return date_st.timestamp(), date_en.timestamp()
+    date_en = datetime.datetime.combine(date_st, date_st.time().max)
+    return int(date_st.timestamp()), int(date_en.timestamp())
+
+
+def extract_date(string) -> str:
+    date_str = re.search(r"(\d{4}).*?(\d{2}).*?(\d{2})", string).groups()
+    return "-".join(date_str)
+
+def extract_time(string) -> str:
+    time_str = re.search(r"(\d{4}).*?(\d{2}).*?(\d{2}).*?(\d{2})", string).groups()
+    time_str = "".join(time_str)
+    if len(time_str) != 14:
+        time_str += "0" * (14 - len(time_str))
+    return time_str
+
+
+if __name__ == "__main__":
+    extract_time("2023-02-11 20 49 22")
