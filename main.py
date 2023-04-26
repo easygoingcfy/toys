@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QLabel, QMainWindow,
                              QWidget)
 from PyQt5.QtGui import QIcon
 
-from model.refactor import QLineEdit
+from model.refactor import QLineEdit, QLineEditTs, TsUnit
 from tools import box_add_layout, generate_hbox
 from utils.time_util import (extract_date, extract_time, str2timestamp,
                              timestamp2str, ts_range_by_date)
@@ -20,7 +20,7 @@ class TimeTransform(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.ts_unit = "s"
+        self.ts_unit = TsUnit.SECOND
         self.init_ui()
         sys._excepthook = sys.excepthook
         sys.excepthook = self.exception_hook
@@ -43,14 +43,14 @@ class TimeTransform(QWidget):
         """时间变换行:将日期数据与时间戳相互转换 fmt:%Y-%m-%d"""
         #显示栏
         self.date_str_line = QLineEdit(self)
-        self.ts_line = QLineEdit(self)
-        self.te_line = QLineEdit(self)
+        self.ts_line = QLineEditTs(self, self.ts_unit)
+        self.te_line = QLineEditTs(self, self.ts_unit)
         self.unit_line = QLineEdit(self)
         self.unit_line.setReadOnly(True)
-        self.unit_line.setText(self.ts_unit)
+        self.unit_line.setText(self.ts_unit.value)
         #按钮
         date_button = QPushButton("日期")
-        date_button.clicked.connect(self.date2ts)
+        date_button.clicked.connect(self.date_button_implement)
         ts_button = QPushButton("开始时间戳")
         ts_button.clicked.connect(lambda: self.ts2date(self.ts_line.text()))
         te_button = QPushButton("结束时间戳")
@@ -63,7 +63,7 @@ class TimeTransform(QWidget):
             [date_button, ts_button, te_button, unit_button])
         #时间变换行: 详细数据的时间戳转换 fmt:%Y-%m-%d %H:%M:%S
         self.datetime_line = QLineEdit(self)
-        self.timestamp_line = QLineEdit(self)
+        self.timestamp_line = QLineEditTs(self, self.ts_unit)
 
         datetime_button = QPushButton("时间")
         datetime_button.clicked.connect(self.datetime_button_implement)
@@ -90,7 +90,7 @@ class TimeTransform(QWidget):
         self.setWindowIcon(QIcon('source/image/cat.jpg'))
         self.show()
 
-    def date2ts(self):
+    def date_button_implement(self):
         date = self.date_str_line.text()
         date = extract_date(date)
         ts, te = ts_range_by_date(date)
@@ -98,23 +98,18 @@ class TimeTransform(QWidget):
         self.te_line.setText(te)
 
     def ts2date(self, timestamp):
-        if isinstance(timestamp, str):
-            timestamp = float(timestamp)
-        if self.ts_unit == "ms":
-            timestamp = timestamp // 1000
         date = timestamp2str(timestamp)
         self.date_str_line.setText(date)
 
     def unit_transform(self):
-        if self.ts_unit == "s":
-            self.ts_line.setText(int(self.ts_line.text()) * 1000)
-            self.te_line.setText(int(self.te_line.text()) * 1000)
-            self.ts_unit = "ms"
+        if self.ts_unit == TsUnit.SECOND:
+            self.ts_unit = TsUnit.MILLISECOND
         else:
-            self.ts_line.setText(int(self.ts_line.text()) // 1000)
-            self.te_line.setText(int(self.te_line.text()) // 1000)
-            self.ts_unit = "s"
-        self.unit_line.setText(self.ts_unit)
+            self.ts_unit = TsUnit.SECOND
+        self.ts_line.setUnit(self.ts_unit)
+        self.te_line.setUnit(self.ts_unit)
+        self.timestamp_line.setUnit(self.ts_unit)
+        self.unit_line.setText(self.ts_unit.value)
 
     def datetime_button_implement(self):
         time_str = extract_time(self.datetime_line.text())
