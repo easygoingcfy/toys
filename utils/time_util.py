@@ -17,6 +17,7 @@ def timestr2str(timestr, fmt, to_fmt="%Y-%m-%d %H:%M:%S"):
     timestamp = str2timestamp(timestr, fmt)
     return timestamp2str(timestamp, to_fmt)
 
+
 def today(fmt="%Y-%m-%d"):
     now = time.time()
     return timestamp2str(now, fmt)
@@ -25,7 +26,7 @@ def today(fmt="%Y-%m-%d"):
 def ts_range_by_date(date):
     if not isinstance(date, str):
         date = str(date)
-    date = re.search("\d{4}-\d{2}-\d{2}", date).group()
+    date = re.search(r"\d{4}-\d{2}-\d{2}", date).group()
     date_st = datetime.datetime.strptime(date, '%Y-%m-%d')
     date_en = datetime.datetime.combine(date_st, date_st.time().max)
     return int(date_st.timestamp()), int(date_en.timestamp())
@@ -34,6 +35,7 @@ def ts_range_by_date(date):
 def extract_date(string) -> str:
     date_str = re.search(r"(\d{4}).*?(\d{2}).*?(\d{2})", string).groups()
     return "-".join(date_str)
+
 
 def extract_time(string) -> str:
     time_str = re.split(r'[ :/\-T年月日]', string)
