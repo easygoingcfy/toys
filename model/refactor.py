@@ -5,6 +5,7 @@
 #                             QWidget, QMessageBox)
 import PyQt5.QtWidgets
 from enum import Enum
+from utils.time_util import today, now
 
 
 class TsUnit(Enum):
@@ -30,8 +31,20 @@ class QLineEditFloat(QLineEdit):
         super().__init__()
 
     def text(self):
-        value = float(super().text())
-        return value
+        value = super().text()
+        return float(value) if value else now()
+
+
+class QLineEditDate(QLineEdit):
+    """用于显示日期数据的QLineEdit"""
+
+    def __init__(self, parent=None):
+        super().__init__()
+        self.setText(today())
+    
+    def text(self):
+        value = super().text()
+        return value if value else today()
 
 
 class QLineEditTs(QLineEditFloat):
@@ -45,6 +58,7 @@ class QLineEditTs(QLineEditFloat):
     def __init__(self, parent=None, unit=TsUnit.SECOND):
         super().__init__()
         self.unit = unit
+        self.setText(now())
 
     def text(self):
         value = super().text()

@@ -45,5 +45,9 @@ def extract_time(string) -> str:
     return time_str
 
 
+def now():
+    return time.time()
+
+
 if __name__ == "__main__":
     extract_time("2023-02-11 20 49 23")

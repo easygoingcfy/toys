@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QLabel, QMainWindow,
                              QWidget)
 from PyQt5.QtGui import QIcon
 
-from model.refactor import QLineEdit, QLineEditTs, TsUnit
+from model.refactor import QLineEdit, QLineEditTs, TsUnit, QLineEditDate
 from tools import box_add_layout, generate_hbox
 from utils.time_util import (extract_date, extract_time, str2timestamp,
                              timestamp2str, ts_range_by_date)
@@ -42,7 +42,7 @@ class TimeTransform(QWidget):
     def init_ui(self):
         """时间变换行:将日期数据与时间戳相互转换 fmt:%Y-%m-%d"""
         #显示栏
-        self.date_str_line = QLineEdit(self)
+        self.date_str_line = QLineEditDate(self)
         self.ts_line = QLineEditTs(self, self.ts_unit)
         self.te_line = QLineEditTs(self, self.ts_unit)
         self.unit_line = QLineEdit(self)
@@ -62,7 +62,7 @@ class TimeTransform(QWidget):
         hbox_buttion_line = generate_hbox(
             [date_button, ts_button, te_button, unit_button])
         #时间变换行: 详细数据的时间戳转换 fmt:%Y-%m-%d %H:%M:%S
-        self.datetime_line = QLineEdit(self)
+        self.datetime_line = QLineEditDate(self)
         self.timestamp_line = QLineEditTs(self, self.ts_unit)
 
         datetime_button = QPushButton("时间")
