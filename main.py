@@ -264,7 +264,6 @@ class longitude_latitude_transform(QWidget):
         lat, lng = self.haversine(lat, lng, distance, bearing)
         self.longitude_result_line.setText(lng)
         self.latitude_result_line.setText(lat)
-    
 
     def calculate_bearing(self, east, north):
         # 使用反正切函数计算方向角
@@ -284,16 +283,21 @@ class longitude_latitude_transform(QWidget):
         lon1_rad = math.radians(lon1)
         bearing_rad = math.radians(bearing)
         # 计算新点的纬度
-        lat2_rad = math.asin(math.sin(lat1_rad) * math.cos(distance / R) +
-                            math.cos(lat1_rad) * math.sin(distance / R) * math.cos(bearing_rad))
+        lat2_rad = math.asin(
+            math.sin(lat1_rad) * math.cos(distance / R)
+            + math.cos(lat1_rad) * math.sin(distance / R) * math.cos(bearing_rad)
+        )
         # 计算新点的经度
-        lon2_rad = lon1_rad + math.atan2(math.sin(bearing_rad) * math.sin(distance / R) * math.cos(lat1_rad),
-                                        math.cos(distance / R) - math.sin(lat1_rad) * math.sin(lat2_rad))
+        lon2_rad = lon1_rad + math.atan2(
+            math.sin(bearing_rad) * math.sin(distance / R) * math.cos(lat1_rad),
+            math.cos(distance / R) - math.sin(lat1_rad) * math.sin(lat2_rad),
+        )
         # 将弧度转换为角度
         lat2 = math.degrees(lat2_rad)
         lon2 = math.degrees(lon2_rad)
 
         return lat2, lon2
+
 
 def calculate_lng_and_lat(lng, lat, lng_distance, lat_distance):
     lng_interval = 0.000001  # °
@@ -306,8 +310,41 @@ def calculate_lng_and_lat(lng, lat, lng_distance, lat_distance):
     return lng + lng_degree, lat + lat_degree
 
 
+class MainWindow(QMainWindow):
+    def __init__(self, parent=None):
+        super(MainWindow, self).__init__(parent)
+        self.setWindowTitle("Main Window")
+
+        self.time_tf = TimeTransform()
+        self.tf = longitude_latitude_transform()
+
+        self.button = QPushButton("Switch")
+        self.button.clicked.connect(self.switch)
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.time_tf)
+        layout.addWidget(self.tf)
+        layout.addWidget(self.button)
+
+        main_widget = QWidget()
+        main_widget.setLayout(layout)
+        self.setCentralWidget(main_widget)
+
+        self.current_widget = self.time_tf
+
+    def switch(self):
+        if self.current_widget == self.time_tf:
+            self.time_tf.hide()
+            self.tf.show()
+            self.current_widget = self.tf
+        else:
+            self.tf.hide()
+            self.time_tf.show()
+            self.current_widget = self.time_tf
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    # time_tf = TimeTransform()
-    tf = longitude_latitude_transform()
+    window = MainWindow()
+    window.show()
     sys.exit(app.exec_())
